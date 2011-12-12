@@ -29,6 +29,8 @@ else ifeq ($(BR2_TARGET_UBOOT_FORMAT_LDR),y)
 UBOOT_BIN          = u-boot.ldr
 else ifeq ($(BR2_TARGET_UBOOT_FORMAT_NAND_BIN),y)
 UBOOT_BIN          = u-boot-nand.bin
+else ifeq ($(BR2_TARGET_UBOOT_FORMAT_IMG),y)
+UBOOT_BIN          = u-boot.img
 else
 UBOOT_BIN          = u-boot.bin
 endif
@@ -86,9 +88,16 @@ define UBOOT_BUILD_CMDS
 		$(UBOOT_MAKE_TARGET)
 endef
 
+ifeq ($(BR2_TARGET_UBOOT_MLO),y)
+define UBOOT_INSTALL_IMAGES_CMDS
+	cp -dpf $(@D)/$(UBOOT_BIN) $(BINARIES_DIR)/
+	cp -dpf $(@D)/MLO $(BINARIES_DIR)/
+endef
+else
 define UBOOT_INSTALL_IMAGES_CMDS
 	cp -dpf $(@D)/$(UBOOT_BIN) $(BINARIES_DIR)/
 endef
+endif
 
 $(eval $(call GENTARGETS))
 

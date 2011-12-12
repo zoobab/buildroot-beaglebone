@@ -85,6 +85,9 @@ choice
 config BR2_TARGET_UBOOT_FORMAT_BIN
 	bool "u-boot.bin"
 
+config BR2_TARGET_UBOOT_FORMAT_IMG
+	bool "u-boot.img"
+
 config BR2_TARGET_UBOOT_FORMAT_NAND_BIN
 	bool "u-boot-nand.bin"
 
@@ -142,5 +145,11 @@ config BR2_TARGET_UBOOT_ETH1ADDR
 	  Target MAC address for the second ethernet interface.
 
 endif # BR2_TARGET_UBOOT_NETWORK
+
+config BR2_TARGET_UBOOT_MLO
+	bool "MLO"
+	help
+	  Copy MLO to the images directory
+
 
 endif # BR2_TARGET_UBOOT
