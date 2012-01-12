@@ -1,0 +1,7 @@
+config BR2_PACKAGE_ERLANG
+	bool "erlang"
+	help
+	  Erlang is a functional programming language with support for
+	  concurrency, fault-tolerance, and soft real-time.
+
+	  http://www.erlang.org/
