@@ -23,8 +23,6 @@ define ERLANG_SAVE_ORIG_FILE
 endef
 
 define ERLANG_RESTORE_ORIG_FILE
-        # After patches are applied, this file gets removed because of
-        # its .orig extension. Save a copy so that we can brint it back.
         cp $(@D)/lib/tools/emacs/test.erl.orig.donotdelete $(@D)/lib/tools/emacs/test.erl.orig
 endef
 
@@ -52,10 +50,11 @@ ERLANG_CONFIGURE_FLAGS += --disable-hipe --disable-threads --disable-smp \
 		--disable-dynamic-ssl-lib --without-termcap --without-javac \
 		--without-ssl
 
+TARGET_CROSS_NAME = $(shell basename $(TARGET_CROSS) | sed "s/\-$$//")
 define ERLANG_CONFIGURE_CMDS
 	cp package/erlang/erl-xcomp-buildroot.conf.in $(ERLANG_XCOMP_CONF)
-	sed -i -e 's/@BUILD@/$(GNU_HOST_NAME)/' $(ERLANG_XCOMP_CONF)
-	sed -i -e 's/@HOST@/$(GNU_TARGET_NAME)/' $(ERLANG_XCOMP_CONF)
+	sed -i -e 's/@BUILD@/guess/' $(ERLANG_XCOMP_CONF)
+	sed -i -e 's#@HOST@#$(TARGET_CROSS_NAME)#' $(ERLANG_XCOMP_CONF)
 	sed -i -e 's#@CONFIGURE_FLAGS@#$(ERLANG_CONFIGURE_FLAGS)#' $(ERLANG_XCOMP_CONF)
 	sed -i -e 's/@CFLAGS@/$(TARGET_CFLAGS)/' $(ERLANG_XCOMP_CONF)
 	cd $(@D) && ERL_TOP=$(@D) $(@D)/otp_build configure --xcomp-conf=$(ERLANG_XCOMP_CONF)
@@ -68,9 +67,8 @@ endef
 
 define ERLANG_INSTALL_TARGET_CMDS
 	-rm $(@D)/release/*/bin/runtest
-	cd $(@D)/release/* && ./Install -cross -minimal $(TARGET_DIR)/usr/erlang
-	mkdir -p $(TARGET_DIR)/usr/erlang
-	cp -a $(@D)/release/*/* $(TARGET_DIR)/usr/erlang
+	cd $(@D)/release/* && ./Install -cross -minimal /usr
+	cp -a $(@D)/release/*/* $(TARGET_DIR)/usr
 endef
 
 $(eval $(call GENTARGETS))
