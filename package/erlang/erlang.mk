@@ -7,11 +7,7 @@
 ERLANG_VERSION = R15B
 ERLANG_SITE = http://erlang.org/download
 ERLANG_SOURCE = otp_src_$(ERLANG_VERSION).tar.gz
-#ERLANG_INSTALL_STAGING = YES
-#HOST_ERLANG_AUTORECONF = YES
-ERLANG_DEPENDENCIES = host-erlang
-#RUBY_MAKE_ENV = $(TARGET_MAKE_ENV)
-#RUBY_CONF_OPT = --disable-install-doc --disable-rpath
+ERLANG_DEPENDENCIES = ncurses
 HOST_ERLANG_CONF_OPT = --disable-hipe \
                 --disable-dynamic-ssl-lib --without-termcap --without-javac \
                 --without-ssl
@@ -52,12 +48,18 @@ ERLANG_CONFIGURE_FLAGS += --disable-hipe --disable-threads --disable-smp \
 
 TARGET_CROSS_NAME = $(shell basename $(TARGET_CROSS) | sed "s/\-$$//")
 define ERLANG_CONFIGURE_CMDS
-	cp package/erlang/erl-xcomp-buildroot.conf.in $(ERLANG_XCOMP_CONF)
-	sed -i -e 's/@BUILD@/guess/' $(ERLANG_XCOMP_CONF)
-	sed -i -e 's#@HOST@#$(TARGET_CROSS_NAME)#' $(ERLANG_XCOMP_CONF)
-	sed -i -e 's#@CONFIGURE_FLAGS@#$(ERLANG_CONFIGURE_FLAGS)#' $(ERLANG_XCOMP_CONF)
-	sed -i -e 's/@CFLAGS@/$(TARGET_CFLAGS)/' $(ERLANG_XCOMP_CONF)
-	cd $(@D) && ERL_TOP=$(@D) $(@D)/otp_build configure --xcomp-conf=$(ERLANG_XCOMP_CONF)
+	echo "erl_xcomp_build=guess" > $(ERLANG_XCOMP_CONF)
+	echo "erl_xcomp_host=$(TARGET_CROSS_NAME)" >> $(ERLANG_XCOMP_CONF)
+	echo "erl_xcomp_configure_flags=$(ERLANG_CONFIGURE_FLAGS)" >> $(ERLANG_XCOMP_CONF)
+	echo "CC=$(TARGET_CC)" >> $(ERLANG_XCOMP_CONF)
+	echo "CFLAGS=$(TARGET_CFLAGS)" >> $(ERLANG_XCOMP_CONF)
+	echo "CPP=$(TARGET_CPP)" >> $(ERLANG_XCOMP_CONF)
+	echo "CXX=$(TARGET_CXX)" >> $(ERLANG_XCOMP_CONF)
+	echo "LD=$(TARGET_LD)" >> $(ERLANG_XCOMP_CONF)
+	echo "RANLIB=$(TARGET_RANLIB)" >> $(ERLANG_XCOMP_CONF)
+	echo "AR=$(TARGET_AR)" >> $(ERLANG_XCOMP_CONF)
+	echo "erl_xcomp_sysroot=$(STAGING_DIR)" >> $(ERLANG_XCOMP_CONF)
+	cd $(@D) && ./otp_build configure --xcomp-conf=$(ERLANG_XCOMP_CONF)
 endef
 
 define ERLANG_BUILD_CMDS
