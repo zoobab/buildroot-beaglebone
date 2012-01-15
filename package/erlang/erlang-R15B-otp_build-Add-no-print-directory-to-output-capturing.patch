@@ -1,0 +1,67 @@
+From 5795c20cbc6c59ee8e7baf1fb04160cd27ec1670 Mon Sep 17 00:00:00 2001
+From: Frank Hunleth <fhunleth@troodon-software.com>
+Date: Sat, 14 Jan 2012 18:51:57 -0500
+Subject: [PATCH] otp_build: Add --no-print-directory to output capturing calls to make
+
+If otp_build is invoked from a Makefile, it can print out the directory
+change message. This message gets included with the output and breaks
+the script.
+
+Signed-off-by: Frank Hunleth <fhunleth@troodon-software.com>
+---
+ otp_build |   16 ++++++++--------
+ 1 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/otp_build b/otp_build
+index a4e2551..10acbbb 100755
+--- a/otp_build
++++ b/otp_build
+@@ -1128,10 +1128,10 @@ do_boot ()
+     setup_make
+ 
+     # Bootstrap if we are cross compiling
+-    if [ X`$MAKE is_cross_configured` = Xyes ]; then
++    if [ X`$MAKE --no-print-directory is_cross_configured` = Xyes ]; then
+ 	TARGET=$BUILDSYS
+ 	$MAKE MAKE="$MAKE" BOOTSTRAP_ROOT=$BOOTSTRAP_ROOT CROSS_COMPILING=no TARGET=$TARGET bootstrap || exit 1
+-	TARGET=`$MAKE target_configured`
++	TARGET=`$MAKE --no-print-directory target_configured`
+     elif [ "x$OVERRIDE_TARGET" != "x" -a "x$OVERRIDE_TARGET" != "xwin32" ]; then
+ 	hide_vars OVERRIDE_TARGET TARGET
+ 	TARGET=$BUILDSYS
+@@ -1147,8 +1147,8 @@ do_boot ()
+ do_boot_emu ()
+ {
+     setup_make
+-    if [ X`$MAKE is_cross_configured` = Xyes ]; then
+-	TARGET=`$MAKE target_configured`
++    if [ X`$MAKE --no-print-directory is_cross_configured` = Xyes ]; then
++	TARGET=`$MAKE --no-print-directory target_configured`
+     fi
+     $MAKE MAKE="$MAKE" BOOTSTRAP_ROOT=$BOOTSTRAP_ROOT TARGET=$TARGET emulator || exit 1
+ }
+@@ -1156,8 +1156,8 @@ do_boot_emu ()
+ do_release ()
+ {
+     setup_make
+-    if [ X`$MAKE is_cross_configured` = Xyes ]; then
+-	TARGET=`$MAKE target_configured`
++    if [ X`$MAKE --no-print-directory is_cross_configured` = Xyes ]; then
++	TARGET=`$MAKE --no-print-directory target_configured`
+     fi
+     $MAKE MAKE="$MAKE" BOOTSTRAP_ROOT=$BOOTSTRAP_ROOT TARGET=$TARGET \
+ 	RELEASE_ROOT=$1 OTP_STRICT_INSTALL=$OTP_STRICT_INSTALL \
+@@ -1167,8 +1167,8 @@ do_release ()
+ do_tests ()
+ {
+     setup_make
+-    if [ X`$MAKE is_cross_configured` = Xyes ]; then
+-	TARGET=`$MAKE target_configured`
++    if [ X`$MAKE --no-print-directory is_cross_configured` = Xyes ]; then
++	TARGET=`$MAKE --no-print-directory target_configured`
+     fi
+     if [ X"$1" = X"" ]; then
+ 	$MAKE MAKE="$MAKE" TARGET=$TARGET release_tests || exit 1
+-- 
+1.7.0.4
+
