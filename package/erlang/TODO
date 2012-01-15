@@ -1,0 +1,10 @@
+Erlang TODO
+
+1. Trim down Erlang installs similar to what the EmbErl script does.
+2. Enable support for kqueue since it looks like it gets turned off
+3. Look at other xcomp variables to see if they need to be set right
+     big file support
+     localization?
+4. Checkout what it takes to get openssl and the other optional packages
+to work.
+5. Add support for compiling erlang scripts from other packages
