@@ -2,3 +2,8 @@
 auto lo
 iface lo inet loopback
 
+# Wired interface
+auto eth0
+iface eth0 inet dhcp
+  hostname `hostname`
+
