@@ -1,5 +1,5 @@
-Buildroot for the BeagleBone
-============================
+Buildroot for the BeagleBone - Erlang Version
+=============================================
 
 This README contains basic instructions for creating a system image
 for the BeagleBone using Buildroot. The image created is minimal, boots
@@ -17,15 +17,9 @@ sudo apt-get install git-core bison flex g++ gettext texinfo libncurses5-dev
 Building
 --------
 
-Select the Buildroot configuration. Two BeagleBone configurations are
-available depending on the desired C library. The uclibc system is
-self-contained and builds host-side tools such as the cross-compiler. 
-The glibc system requires the TI AM335x SDK to be installed and is a
-work in progress. 
+First, tell buildroot which configuration to use:
 
-To select the uclibc system, run:
-
-make beaglebone_uclibc_defconfig
+make beaglebone_erlang_defconfig
 
 To build everything, run:
 
@@ -40,29 +34,26 @@ The build output is stored in the output/images directory.
 Creating a BeagleBone MicroSD card
 ----------------------------------
 
-The MicroSD card that comes with the BeagleBone is partitioned properly for
-the BuildRoot image. To format a new MicroSD card, the following will work:
+After the build completes successfully, run the create_sdcard.sh script to
+format a MicroSD card for the BeagleBone. While it certainly doesn't need
+to be this large, I currently use 4 GB MicroSD cards and the script
+makes that assumption. Large cards should work fine.
 
-sudo sfdisk -H 255 -S 63 /dev/XXXXXX << EOF
-0,9,c,*
-,124
-EOF
+Since the create_sdcard.sh script formats the card, be very careful with
+it to avoid losing data. It fails if you specify a disk that is currently
+mounted.
+
+
+Updating the Root FS on the BeagleBone
+--------------------------------------
+
+The Root FS is configured to mount read-only on the BeagleBone. This is done 
+to prevent data corruption from unsafe shutdowns and as a reminder that all
+configuration and new packages have to end up in the buildroot configuration.
+
+Since this can be annoying during debug, the rootfs can be mounted by running:
+
+mount -o remount,rw /
+
  
-sudo mkfs.vfat /dev/XXXXXX -n boot
-
-Then copy the built images to the SD Card:
-
-# Copy the bootloads and the Linux kernel
-cp MLO u-boot.img uImage /media/boot
-
-# Copy the root file system (replace sdd2 with the second partition of right
-# device)
-sudo dd if=rootfs.ext2 of=/dev/sdd2 bs=128k
-
-Notes
------
-
-Bring up the ethernet interface: 
-
-# udhcp
  
