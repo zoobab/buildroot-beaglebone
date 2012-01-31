@@ -1,0 +1,12 @@
+config BR2_PACKAGE_GIT
+	bool "git"
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_CURL
+	select BR2_PACKAGE_LIBCURL
+	select BR2_PACKAGE_ZLIB
+	select BR2_PACKAGE_EXPAT
+	help
+	  Git - the stupid content tracker
+
+	  http://git-scm.com/
+
