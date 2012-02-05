@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# Check for the first boot and initialize the MicroSD card
+# if it has not been initialized before. 
+
+# The image creation script will create a file in the VFAT partition
+# called 1stboot. After we have initialized everything, erase this 
+# file. The next time that the user boots, this logic will be skipped.
+
+if [ -e /mnt/boot/1stboot ];
+then
+        echo "First time boot detected"
+
+        grep mmcblk0p3 /proc/mounts >/dev/null
+        if [ "$?" != "0" ];
+        then
+                echo "Performing first time format of /mnt/user (/dev/mmcblk0p3)"
+                mke2fs -L bbone-user /dev/mmcblk0p3
+
+                # Mount our newly formatter user partition 
+                mount /mnt/user
+        fi
+
+        echo "Clearing first time boot flag"
+        mount -o remount,rw /mnt/boot
+        rm /mnt/boot/1stboot
+        mount -o remount,ro /mnt/boot
+fi
+
+

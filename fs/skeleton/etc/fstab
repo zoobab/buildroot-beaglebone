@@ -12,5 +12,6 @@ sysfs		/sys	       sysfs    defaults	  0	 0
 # put its cookie file and some small scripts there.
 tmpfs		/home/default	tmpfs 	defaults,gid=1000,uid=1000,mode=2755,size=16m	0	0
 
-# Large file system for big and persistent stuff
-/dev/mmcblk0p4	/mnt		ext2	defaults		0	0
+# Other filesystems on the MicroSD card
+/dev/mmcblk0p1	/mnt/boot	vfat	ro,defaults	0	0
+/dev/mmcblk0p3	/mnt/user	ext2	defaults	0	0
